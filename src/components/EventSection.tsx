@@ -36,8 +36,9 @@ const events = [
 ];
 
 export default function EventSection() {
-  const mapsQuery = encodeURIComponent(venueName + ' ' + venueAddress);
-  const mapsUrl = `https://maps.google.com/?q=${mapsQuery}`;
+  // Menggunakan format URL Google Maps universal agar otomatis membuka aplikasi di HP
+  const mapsQuery = encodeURIComponent(venueName + ', ' + venueAddress);
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
 
   return (
     <SectionWrapper id="event" className="py-20 sm:py-24 md:py-36 bg-white/65 backdrop-blur-md border-b border-cream-200/40">
