@@ -17,10 +17,10 @@ export default function CoupleSection() {
         {/* Section label */}
         <div className="text-center mb-10 sm:mb-16">
           <p className="font-sans text-xs tracking-[0.3em] uppercase text-stone-400 mb-3 sm:mb-4">
-            Dengan Penuh Kasih
+            Dengan kasih karunia Tuhan yang mempersatukan,
           </p>
           <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl italic text-stone-700">
-            Dalam nama Bapa Putra dan Roh Kudus
+             Kami percaya bahwa cinta adalah anugerah terindah dari Tuhan. Kini, saatnya kami melangkah dalam ikatan kudus pernikahan, dengan penuh syukur dan kerendahan hati, kami mengundang kehadiran dan doa restu Bapak/Ibu/Saudara/i.
           </h2>
           <div className="ornament mt-4 sm:mt-6">
             <span className="text-gold-400">✦</span>
