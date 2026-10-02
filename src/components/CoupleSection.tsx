@@ -1,29 +1,10 @@
 import Image from 'next/image';
 import SectionWrapper from './SectionWrapper';
+import { config } from '../../next.config';
 
 const groomName = process.env.NEXT_PUBLIC_GROOM_NAME || 'Juan';
 const brideName = process.env.NEXT_PUBLIC_BRIDE_NAME || 'Indri';
 
-// ============================================================
-// ✏️  EDIT BAGIAN INI UNTUK KUSTOMISASI TEKS & FOTO
-// ============================================================
-const config = {
-  groom: {
-    parentNames: 'Putra dari Bapak David dima huda & Ibu Rosiana dima huda ully', // ← ganti nama orang tua
-    hometown: 'Kupang, Indonesia',                    // ← ganti kota asal
-    photo: '',    // ← isi path foto, contoh: '/images/groom.jpg'
-                  //   (letakkan foto di folder public/images/)
-  },
-  bride: {
-    parentNames: 'Putri dari Bapak Otnial anderias mone & Ibu Martha salendang', // ← ganti nama orang tua
-    hometown: 'Kupang, Indonesia',                     // ← ganti kota asal
-    photo: '',    // ← isi path foto, contoh: '/images/bride.jpg'
-  },
-  quote: {
-    arabic: 'Demikianlah mereka bukan lagi dua, melainkan satu. Karena itu, apa yang telah dipersatukan Allah, tidak boleh diceraikan manusia.',
-    source: '(Matius 19:6)', // ← ganti sumber kutipan
-  },
-};
 // ============================================================
 
 export default function CoupleSection() {
