@@ -1,4 +1,4 @@
-# 💒 Undangan Pernikahan Digital — Next.js + Tailwind CSS + Gemini AI
+# 💒 Undangan Pernikahan Digital — Next.js + Tailwind CSS
 
 Website undangan pernikahan digital yang elegan dan minimalis, dilengkapi dengan fitur **AI Wish Formatter** yang didukung oleh **Google Gemini API**.
 
@@ -174,4 +174,4 @@ vercel
 
 ---
 
-> Made with 💗 for a special day
+> Made by Tedz Nation X
