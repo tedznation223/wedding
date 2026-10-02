@@ -24,7 +24,7 @@ const events = [
   },
   {
     id: 2,
-    type: 'Resepsi Pernikahan',
+    type: 'Pernikahan',
     emoji: '🌸',
     date: new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(weddingDate),
     time: '16.30 WITA - Selesai',
