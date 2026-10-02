@@ -37,11 +37,11 @@ Edit file `.env.local` dan isi dengan data Anda:
 GEMINI_API_KEY=your_gemini_api_key_here
 
 # Informasi pernikahan
-NEXT_PUBLIC_GROOM_NAME=Reza
-NEXT_PUBLIC_BRIDE_NAME=Aisha
+NEXT_PUBLIC_GROOM_NAME=Tedz
+NEXT_PUBLIC_BRIDE_NAME=Nation
 NEXT_PUBLIC_WEDDING_DATE=2025-03-15T10:00:00
-NEXT_PUBLIC_VENUE_NAME=Grand Ballroom The Ritz-Carlton
-NEXT_PUBLIC_VENUE_ADDRESS=Jl. Prof. Dr. Satrio Kav. 18, Jakarta Selatan 12940
+NEXT_PUBLIC_VENUE_NAME=dimana saja
+NEXT_PUBLIC_VENUE_ADDRESS=wheennn yaa
 ```
 
 ### 3. Jalankan Development Server
