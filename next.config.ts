@@ -9,9 +9,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Tambahkan allowedDevOrigins di sini untuk mengizinkan akses dari HP via IP lokal
+  allowedDevOrigins: ['192.168.0.103'],
 };
 
 export default nextConfig;
+
 // ============================================================
 // ✏️  EDIT BAGIAN INI UNTUK KUSTOMISASI TEKS & FOTO
 // ============================================================
