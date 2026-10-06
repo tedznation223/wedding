@@ -1,17 +1,37 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Heart, RefreshCw } from 'lucide-react';
 import SectionWrapper from './SectionWrapper';
-import { WishEntry } from '@/lib/types';
+import { supabase } from '@/lib/supabase';
+
+// Tipe data disesuaikan dengan struktur tabel wishes di Supabase
+interface WishEntry {
+  id: number | string;
+  name: string;
+  attendance: string;
+  message: string;
+  originalWish?: string;
+  formattedWish?: string;
+  isFormatted?: boolean;
+  created_at: string;
+}
 
 function WishCard({ wish, index }: { wish: WishEntry; index: number }) {
   const [showOriginal, setShowOriginal] = useState(false);
 
+  // Tanggal menggunakan format Indonesia
   const date = new Intl.DateTimeFormat('id-ID', {
     day: 'numeric', month: 'short', year: 'numeric',
-  }).format(new Date(wish.timestamp));
+  }).format(new Date(wish.created_at));
+
+  // Mendukung struktur teks AI jika ada, atau fallback ke message biasa
+  const displayMessage = wish.isFormatted && wish.formattedWish 
+    ? (showOriginal ? (wish.originalWish || wish.message) : wish.formattedWish)
+    : wish.message;
+
+  const isHadir = wish.attendance?.toLowerCase() === 'hadir';
 
   return (
     <motion.div
@@ -20,26 +40,26 @@ function WishCard({ wish, index }: { wish: WishEntry; index: number }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.5, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="glass rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-cream-200 hover:border-cream-300"
+      className="glass rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-cream-200 hover:border-cream-300 bg-white/80"
     >
       <div className="flex items-start justify-between gap-4 mb-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cream-200 to-blush-100 flex items-center justify-center flex-shrink-0">
             <span className="font-serif text-lg italic text-stone-500">
-              {wish.name.charAt(0).toUpperCase()}
+              {wish.name ? wish.name.charAt(0).toUpperCase() : '?'}
             </span>
           </div>
           <div>
             <p className="font-sans text-sm font-medium text-stone-700">{wish.name}</p>
             <div className="flex items-center gap-2 mt-0.5">
               <span className={`font-sans text-xs px-2 py-0.5 rounded-full ${
-                wish.attendance === 'hadir'
-                  ? 'bg-sage-100 text-sage-500'
-                  : 'bg-stone-100 text-stone-400'
+                isHadir
+                  ? 'bg-emerald-50 text-emerald-600'
+                  : 'bg-stone-100 text-stone-500'
               }`}>
-                {wish.attendance === 'hadir' ? '✅ Hadir' : '❌ Tidak Hadir'}
+                {isHadir ? '✅ Hadir' : '❌ Tidak Hadir'}
               </span>
-              <span className="font-sans text-xs text-stone-300">{date}</span>
+              <span className="font-sans text-xs text-stone-400">{date}</span>
             </div>
           </div>
         </div>
@@ -52,13 +72,13 @@ function WishCard({ wish, index }: { wish: WishEntry; index: number }) {
       </div>
 
       <blockquote className="font-serif text-sm italic text-stone-600 leading-relaxed">
-        &ldquo;{showOriginal ? wish.originalWish : wish.formattedWish}&rdquo;
+        &ldquo;{displayMessage}&rdquo;
       </blockquote>
 
-      {wish.isFormatted && (
+      {wish.isFormatted && wish.originalWish && (
         <button
           onClick={() => setShowOriginal(!showOriginal)}
-          className="mt-3 font-sans text-xs text-stone-400 hover:text-cream-500 transition-colors"
+          className="mt-3 font-sans text-xs text-stone-400 hover:text-stone-600 transition-colors"
         >
           {showOriginal ? '✨ Tampilkan versi AI' : '💬 Tampilkan pesan asli'}
         </button>
@@ -72,25 +92,48 @@ export default function WishlistSection() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchWishes = useCallback(async () => {
+  // Fungsi mengambil data ucapan dari Supabase
+  const fetchWishes = async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/rsvp');
-      const data = await res.json();
-      if (data.success) {
-        setWishes(data.wishes.filter((w: WishEntry) => w.formattedWish));
+      const { data, error } = await supabase
+        .from('wishes')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw error;
       }
-    } catch {
+
+      setWishes(data || []);
+    } catch (err) {
+      console.error('Error fetching wishes:', err);
       setError('Gagal memuat ucapan.');
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
     fetchWishes();
-  }, [fetchWishes]);
+
+    // Integrasi Supabase Realtime: Otomatis tambah ucapan baru tanpa perlu refresh manual
+    const channel = supabase
+      .channel('realtime-wishes')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'wishes' },
+        (payload) => {
+          setWishes((prev) => [payload.new as WishEntry, ...prev]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   return (
     <SectionWrapper id="wishlist" className="py-20 sm:py-24 md:py-36 bg-white/65 backdrop-blur-md border-b border-cream-200/40">
@@ -102,7 +145,7 @@ export default function WishlistSection() {
             <span className="text-gold-400">✦</span>
           </div>
           <p className="font-sans text-xs sm:text-sm text-stone-500 max-w-md mx-auto">
-            Setiap ucapan yang dikirimkan, diperindah oleh AI dan disimpan sebagai kenangan.
+            Setiap ucapan yang dikirimkan, disimpan sebagai kenangan abadi di hari bahagia kami.
           </p>
         </div>
 
@@ -111,7 +154,7 @@ export default function WishlistSection() {
           <button
             onClick={fetchWishes}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 sm:gap-2 font-sans text-xs tracking-wider uppercase text-stone-400 hover:text-cream-500 transition-colors border border-cream-200 rounded-full px-3.5 py-1.5 sm:px-4 sm:py-2 active:scale-95"
+            className="inline-flex items-center gap-1.5 sm:gap-2 font-sans text-xs tracking-wider uppercase text-stone-400 hover:text-stone-600 transition-colors border border-cream-200 rounded-full px-3.5 py-1.5 sm:px-4 sm:py-2 active:scale-95 bg-white/50"
           >
             <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
             Refresh
@@ -141,7 +184,7 @@ export default function WishlistSection() {
           <AnimatePresence mode="popLayout">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
               {wishes.map((wish, i) => (
-                <WishCard key={wish.id} wish={wish} index={i} />
+                <WishCard key={wish.id || i} wish={wish} index={i} />
               ))}
             </div>
           </AnimatePresence>
