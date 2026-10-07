@@ -1,7 +1,5 @@
 # 💒 Undangan Pernikahan Digital — Next.js + Tailwind CSS
 
-Website undangan pernikahan digital yang elegan dan minimalis, dilengkapi dengan fitur **AI Wish Formatter** yang didukung oleh **Google Gemini API**.
-
 ---
 
 ## ✨ Fitur Utama
@@ -13,7 +11,6 @@ Website undangan pernikahan digital yang elegan dan minimalis, dilengkapi dengan
 | 👫 **Couple Section** | Profil mempelai pria & wanita |
 | 📍 **Event Section** | Detail jadwal akad & resepsi, link ke Google Maps |
 | 📋 **RSVP Form** | Formulir konfirmasi kehadiran + kolom ucapan |
-| ✨ **AI Wish Formatter** | Ucapan tamu diperindah otomatis oleh Gemini AI |
 | 💬 **Wishlist** | Galeri ucapan yang sudah diformat, bisa toggle versi asli |
 | 🌸 **Floating Petals** | Animasi kelopak bunga melayang |
 | 📱 **Fully Responsive** | Desain mobile-first dengan Tailwind CSS |
@@ -33,9 +30,6 @@ npm install
 Edit file `.env.local` dan isi dengan data Anda:
 
 ```env
-# Dapatkan API key di: https://aistudio.google.com/app/apikey
-GEMINI_API_KEY=your_gemini_api_key_here
-
 # Informasi pernikahan
 NEXT_PUBLIC_GROOM_NAME=Tedz
 NEXT_PUBLIC_BRIDE_NAME=Nation
@@ -61,7 +55,7 @@ wedding-invitation/
 ├── src/
 │   ├── app/
 │   │   ├── api/
-│   │   │   ├── format-wish/route.ts   # Gemini AI Wish Formatter endpoint
+│   │   │   ├── send-rsvp-email/route.ts  #Email send Environtment 
 │   │   │   └── rsvp/route.ts          # RSVP submit & fetch endpoint
 │   │   ├── globals.css                # Global styles + Google Fonts
 │   │   ├── layout.tsx                 # Root layout + Toaster
@@ -74,9 +68,9 @@ wedding-invitation/
 │   │   ├── CoupleSection.tsx          # Profil kedua mempelai
 │   │   ├── CountdownSection.tsx       # Countdown timer interaktif
 │   │   ├── EventSection.tsx           # Detail jadwal + Google Maps
-│   │   ├── RSVPSection.tsx            # Form RSVP + AI Wish Formatter
+│   │   ├── RSVPSection.tsx            # Form RSVP
 │   │   ├── WishlistSection.tsx        # Galeri ucapan tamu
-│   │   └── FooterSection.tsx          # Footer dengan ayat Al-Qur'an
+│   │   └── FooterSection.tsx          # Footer dengan ayat/surat
 │   └── lib/
 │       ├── types.ts                   # TypeScript interfaces
 │       └── wishStore.ts               # In-memory wish store
@@ -111,27 +105,6 @@ Semua data pernikahan dikonfigurasi via environment variables di `.env.local`.
 Untuk mengubah detail mempelai di `CoupleSection.tsx` (nama orang tua, kota), edit langsung di komponen tersebut.
 
 ---
-
-## 🤖 AI Wish Formatter — Cara Kerja
-
-```
-Tamu menulis ucapan
-       ↓
-Klik "Perindah dengan AI"
-       ↓
-POST /api/format-wish
-       ↓
-Gemini 1.5 Flash API
-       ↓
-Ucapan lebih puitis & hangat
-       ↓
-Preview di form sebelum submit
-       ↓
-Submit RSVP → disimpan di wishlist
-```
-
-Jika Gemini API key tidak dikonfigurasi, form RSVP tetap berfungsi normal tanpa fitur AI.
-
 ---
 
 ## 🗄️ Database (Produksi)
@@ -167,7 +140,6 @@ vercel
 - **Styling:** Tailwind CSS 3
 - **Animasi:** Framer Motion 11
 - **Form:** React Hook Form
-- **AI:** Google Gemini 1.5 Flash
 - **Notifikasi:** React Hot Toast
 - **Icons:** Lucide React
 - **Font:** Google Fonts (Cormorant Garamond + Jost)
