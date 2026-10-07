@@ -5,9 +5,13 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
   try {
-    const { name, email, attendance, guestCount } = await request.json();
+    const body = await request.json();
+    console.log('--- API EMAIL DIPANGGIL ---', body);
+
+    const { name, email, attendance, guestCount } = body;
 
     if (!email) {
+      console.error('ERROR: Email tidak ditemukan di request body');
       return NextResponse.json({ success: false, error: 'Email tidak ditemukan' }, { status: 400 });
     }
 
@@ -44,17 +48,17 @@ export async function POST(request: Request) {
     `;
 
     // Kirim email menggunakan Resend
-    // Catatan: Gunakan onboarding@resend.dev jika belum mendaftarkan domain sendiri di Resend
-    const data = await resend.emails.send({
-      from: 'Wedding Invitation <onboarding@resend.dev>',
+    const response = await resend.emails.send({
+      from: 'Wedding Invitation <info@tedznationx.my.id>',
       to: [email],
       subject: subject,
       html: htmlContent,
     });
 
-    return NextResponse.json({ success: true, data });
+    console.log('BERHASIL DIKIRIM RESEND:', response);
+    return NextResponse.json({ success: true, response });
   } catch (error) {
-    console.error('Error sending email:', error);
-    return NextResponse.json({ success: false, error: 'Gagal mengirim email' }, { status: 500 });
+    console.error('GAGAL MENGIRIM EMAIL (RESEND CATCH):', error);
+    return NextResponse.json({ success: false, error: 'Gagal mengirim email', details: error }, { status: 500 });
   }
 }

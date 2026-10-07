@@ -21,9 +21,12 @@ interface WishEntry {
 function WishCard({ wish, index }: { wish: WishEntry; index: number }) {
   const [showOriginal, setShowOriginal] = useState(false);
 
-  // Tanggal menggunakan format Indonesia
+  // Tanggal menggunakan format Indonesia dengan zona waktu UTC agar tanggal tidak bergeser
   const date = new Intl.DateTimeFormat('id-ID', {
-    day: 'numeric', month: 'short', year: 'numeric',
+    day: 'numeric', 
+    month: 'short', 
+    year: 'numeric',
+    timeZone: 'UTC',
   }).format(new Date(wish.created_at));
 
   // Mendukung struktur teks AI jika ada, atau fallback ke message biasa

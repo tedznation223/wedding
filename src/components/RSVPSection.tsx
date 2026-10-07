@@ -27,7 +27,7 @@ export default function RSVPSection() {
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     try {
-      // Hanya kirim kolom yang sudah pasti ada di tabel wishes Supabase
+      // 1. Simpan ke tabel 'wishes' di Supabase
       const { error } = await supabase.from('wishes').insert([
         {
           name: data.name,
@@ -42,6 +42,36 @@ export default function RSVPSection() {
         console.error('SUPABASE DETAIL ERROR:', error);
         alert('Gagal Supabase: ' + (error.message || JSON.stringify(error)));
         throw error;
+      }
+
+      // 2. Kirim Email Konfirmasi Otomatis dengan Debugging Response
+      try {
+        console.log('Mengirim request fetch ke /api/send-rsvp-email...', {
+          name: data.name,
+          email: data.email,
+          attendance: data.attendance,
+          guestCount: data.guestCount,
+        });
+
+        const emailRes = await fetch('/api/send-rsvp-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: data.name,
+            email: data.email,
+            attendance: data.attendance,
+            guestCount: data.guestCount,
+          }),
+        });
+
+        const emailResult = await emailRes.json();
+        console.log('HASIL RESPON DARI API EMAIL:', emailResult);
+
+        if (!emailRes.ok) {
+          console.error('API Email mengembalikan error status:', emailRes.status, emailResult);
+        }
+      } catch (emailErr) {
+        console.error('Gagal total saat fetch ke /api/send-rsvp-email:', emailErr);
       }
 
       setSubmitted(true);
